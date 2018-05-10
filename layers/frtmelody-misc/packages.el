@@ -860,15 +860,16 @@ Search for a search tool in the order provided by `dotspacemacs-search-tools'."
     (spacemacs|define-custom-layout "@Python-module"
       :binding "p"
       :body
-      (find-file "~/Svnprojects/python_module/engine/tornado_extend/extend.py")
+      (find-file "~/work/python_module/engine/tornado_extend/extend.py")
       (split-window-right)
-      (find-file "~/Svnprojects/python_module/engine/setup.py"))
+      (find-file "~/work/python_module/engine/setup.py"))
     (spacemacs|define-custom-layout "@Golang"
       :binding "g"
       :body
-      (find-file "~/go/src/git.inke.cn/BackendPlatform/golang/logging/logger.go")
+      ;; (find-file "~/go/src/git.inke.cn/BackendPlatform/golang/logging/logger.go")
+      (find-file "~/work/go_work/src/git.inke.cn/BackendPlatform/golang/logging/logger.go")
       (split-window-right)
-      (find-file "~/go/src/git.inke.cn/BackendPlatform/golang/balance/balance.go"))
+      (find-file "~/work/go_work/src/git.inke.cn/BackendPlatform/golang/balance/balance.go"))
     (spacemacs|define-custom-layout "@Rpc-python"
       :binding "y"
       :body
@@ -918,7 +919,7 @@ Search for a search tool in the order provided by `dotspacemacs-search-tools'."
             (push item  ffip-prune-patterns)))
         (when (ffip-current-full-filename-match-pattern-p "\\(/rpc-go\\)")
           ;; set the root directory into "~/projs/PROJECT_DIR"
-          (setq-local ffip-project-root "~/go/src/git.inke.cn/inkelogic/rpc-go")
+          (setq-local ffip-project-root "~/work/go_work/src/git.inke.cn/inkelogic/rpc-go")
           ;; well, I'm not interested in concatenated BIG js file or file in dist/
           (setq-local ffip-find-options "-not -size +64k -not -iwholename '*/bin/*'")
           ;; do NOT search files in below directories, the default value is better.
