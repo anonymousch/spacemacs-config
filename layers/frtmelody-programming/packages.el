@@ -168,7 +168,19 @@
     (remove-hook 'emacs-lisp-mode-hook 'auto-compile-mode))
 
 (defun frtmelody-programming/post-init-python ()
-  (add-hook 'python-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+  ;; (add-hook 'python-mode-hook #'(lambda ()
+  ;;                                 (modify-syntax-entry ?_ "w")
+  ;;                                 (set (make-local-variable 'company-backends) '(company-lsp))
+  ;;                                 (company-mode)
+  ;;                                 ))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (set (make-local-variable 'company-backends) '(company-lsp))
+              (company-mode)
+              (lsp-python-enable)
+              (company-lsp)
+              (modify-syntax-entry ?_ "w")
+              ))
   (setq python-shell-interpreter "python")
  )
 
@@ -182,9 +194,9 @@
 )
 
 (defun frtmelody-programming/post-init-js-doc ()
-  (setq js-doc-mail-address "frtmelody@gmail.com"
-        js-doc-author (format "Ning Xue <%s>" js-doc-mail-address)
-        js-doc-url "http://www.frtmelody.tech"
+  (setq js-doc-mail-address "ruichao.liu@gmail.com"
+        js-doc-author (format "Ruichao Liu<%s>" js-doc-mail-address)
+        js-doc-url "http://www.fomalhaut.tech"
         js-doc-license "MIT")
 
   )
