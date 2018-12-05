@@ -48,7 +48,7 @@
 
 ;; configuration scheme
 ;; https://prettier.io/docs/en/configuration.html#configuration-schema
-(defun frtmelody-programming/init-prettier-js ()
+(defun frtmelody-programming/post-init-prettier-js ()
   (use-package prettier-js
     :defer t
     :init

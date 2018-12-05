@@ -27,7 +27,7 @@
     )
   )
 
-(defun frtmelody-ui/init-doom-themes ()
+(defun frtmelody-ui/post-init-doom-themes ()
   (use-package doom-themes
     :init
     (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
