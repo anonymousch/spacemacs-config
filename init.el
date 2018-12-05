@@ -28,17 +28,17 @@ values."
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '()
+   dotspacemacs-mode-line-theme 'doom
+   ;; dotspacemacs-mode-line-theme 'all-the-icons
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     ivy
+     (ivy :variables ivy-enable-advanced-buffer-information t)
      (better-defaults :variables
       better-defaults-move-to-beginning-of-code-first t
       better-defaults-move-to-end-of-code-first nil)
      ranger
-     (colors :variables colors-colorize-identifiers 'variables
-             colors-enable-nyan-cat-progress-bar t
-             )
+     colors
      themes-megapack
      prodigy
      search-engine
@@ -84,25 +84,39 @@ values."
      (chrome :packages (not edit-server gmail-message-mode))
      (org :variables org-want-todo-bindings t)
      yaml
-     (python :packages (not anaconda-mode company-anaconda)
-             :variables
+     ;; (lsp :variables
+     ;;      lsp-ui-sideline-enable nil
+     ;;      lsp-ui-doc-include-signature t
+     ;;      lsp-ui-remap-xref-keybindings t)
+     (python :variables
+             python-sort-imports-on-save t
              python-enable-yapf-format-on-save t
-             python-backend 'lsp
+             python-backend 'ycmd
              python-test-runner '(nose pytest))
-     (go :variables gofmt-command "goimports")
+     (go :variables
+         gofmt-command "goimports"
+         ;; go-backend 'lsp
+         ;; go-use-golangci-lint t
+         ;; godoc-at-point-function 'godoc-gogetdoc
+         )
+     ycmd
      protobuf
      lua
      html
-     lsp
      rust
      (javascript :packages (not web-beautify livid-mode company-tern tern)
                  :variables
                  node-add-modules-path t
                  js2-basic-offset 2 ; javascript indent
                  js-indent-level  2 ; json indent
+                 tern-command '("node" "/usr/local/bin/tern")
                  )
-     (java :packages (not eclim ensime company-emacs-eclim)
-           :variables c-basic-offset 2)
+     (java
+      :packages (not eclim company-emacs-eclim)
+      :variables
+      c-basic-offset 2
+      java-backend 'lsp
+      )
      (elfeed :variables rmh-elfeed-org-files (list "~/Documents/feed.org"))
      (typescript :variables
                  typescript-fmt-on-save nil
@@ -110,8 +124,9 @@ values."
      emacs-lisp
      (clojure :variables clojure-enable-fancify-symbols t)
      racket
-     (c-c++ :packages (not realgud clang-format disaster rtags company-rtags flycheck-rtags ivy-rtags)
+     (c-c++
             :variables
+            c-c++-enable-rtags-support 'no-completion
             c-c++-default-mode-for-headers 'c++-mode
             c-c++-enable-clang-support t
             c-c++-enable-clang-format-on-save t
@@ -119,6 +134,11 @@ values."
             c-c++-enable-google-newline t
             c-c++-enable-c++11 t)
      frtmelody
+     (scala :variables
+            scala-enable-eldoc t
+            scala-auto-start-ensime t
+            )
+     react
      (chinese :packages youdao-dictionary fcitx
               :variables chinese-enable-fcitx t
               chinese-enable-youdao-dict t))
@@ -134,10 +154,10 @@ values."
      spaceline
      anaconda-mode
      company-anaconda
-     magit-gh-pulls magit-gitflow org-projectile evil-mc realgud
+     magit-gh-pulls magit-gitflow evil-mc realgud
      evil-args evil-ediff evil-exchange evil-unimpaired
      evil-indent-plus volatile-highlights smartparens
-     spaceline holy-mode skewer-mode rainbow-delimiters
+     holy-mode skewer-mode rainbow-delimiters
      highlight-indentation vi-tilde-fringe eyebrowse
      org-bullets smooth-scrolling org-repo-todo org-download org-timer
      livid-mode git-gutter git-gutter-fringe  evil-escape
@@ -148,7 +168,7 @@ values."
      helm-flyspell flyspell-correct-helm clean-aindent-mode
      helm-c-yasnippet ace-jump-helm-line helm-make magithub
      helm-themes helm-swoop helm-spacemacs-help smeargle
-     ido-vertical-mode flx-ido company-quickhelp counsel-projectile
+     ido-vertical-mode flx-ido company-quickhelp
      window-purpose spacemacs-purpose-popwin
      ivy-purpose helm-purpose
      )
@@ -217,7 +237,10 @@ values."
    ;;                       doom-one)
    dotspacemacs-themes '(
                          ;; doom-one-light
-                         (modern-solarizedlight :location (recipe :fetcher github :repo "fuxialexander/modern-light-theme"))
+                         ;; atom-one-dark
+                         ;; (modern-solarizedlight :location (recipe :fetcher github :repo "fuxialexander/modern-light-theme"))
+                         doom-one
+                         doom-solarized-light
                          solarized-light
                          spacemacs-dark
                          spacemacs-light
@@ -227,10 +250,10 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 19
+                               :size 18
                                :weight normal
                                :width normal
-                               :powerline-scale 1.2)
+                               :powerline-scale 1.0)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -370,7 +393,7 @@ values."
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `rg', `ag', `pt', `ack' and `grep'.
    ;; (default '("rg" "ag" "pt" "ack" "grep"))
-   dotspacemacs-search-tools '("ag" "pt" "ack" "grep")
+   dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
    ;; The default package repository used if no explicit repository has been
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
@@ -426,12 +449,15 @@ values."
         '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
           ("org-cn"   . "https://elpa.emacs-china.org/org/")
           ("marmalade"   . "https://marmalade-repo.org/packages/")
+          ("melpa-stable"   . "http://elpa.emacs-china.org/melpa-stable/")
           ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
   (setq configuration-layer-elpa-archives
         '(("melpa-cn" . "https://elpa.emacs-china.org/melpa/")
           ("org-cn"   . "https://elpa.emacs-china.org/org/")
           ("marmalade"   . "https://marmalade-repo.org/packages/")
+          ("melpa-stable"   . "http://elpa.emacs-china.org/melpa-stable/")
           ("gnu-cn"   . "https://elpa.emacs-china.org/gnu/")))
+  (push '("ensime" . "melpa-stable") package-pinned-packages)
 
   ;; https://github.com/syl20bnr/spacemacs/issues/2705
   ;; (setq tramp-mode nil)
@@ -450,50 +476,42 @@ values."
 
 (defun dotspacemacs/user-config ()
   (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+  (setq spacemacs-default-jump-handlers nil)
+        ;; (remove 'evil-goto-definition spacemacs-default-jump-handlers)
+        ;; (remove 'dump-jump-go spacemacs-default-jump-handlers)
+        ;; )
 
   (defun frtmelody-kill-buffer-or-close-window ()
     (interactive)
-      (if (< 1 (length (cl-delete-duplicates (mapcar #'window-buffer (window-list)))))
-          (delete-window)
-        (kill-current-buffer)
+    (if (< 1 (length (cl-delete-duplicates (mapcar #'window-buffer (window-list)))))
+        (delete-window)
+      (kill-current-buffer)
       )
     )
   (evil-ex-define-cmd "q[uit]" 'frtmelody-kill-buffer-or-close-window )
 
-  ;; (setq debug-on-error t)
-  ;; (set-variable 'ycmd-server-command `("python" ,(expand-file-name "~/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd/__main__.py")))
-  ;; (set-variable 'ycmd-global-config "~/.vim/ycm_extra_conf.py")
+  (set-variable 'ycmd-server-command `("/usr/bin/python" ,(expand-file-name "~/.vim/bundle/YouCompleteMe/third_party/ycmd/ycmd/__main__.py")))
+  (set-variable 'ycmd-global-config "~/.vim/ycm_extra_conf.py")
 
+  (setq ensime-startup-notification nil)
   (setq ns-use-srgb-colorspace nil)
   (setq powerline-default-separator 'utf-8)
   (setq multi-term-program "/bin/zsh")
   (setq system-uses-terminfo nil)
 
   (global-hl-line-mode 1)
+  ;; disable menubar https://emacs.stackexchange.com/questions/29441/how-do-i-disable-menu-bar-mode-only-for-tty-frames
   (unless (display-graphic-p)
-    (setq linum-format (concat linum-format " "))
-    (setq linum-relative-format (concat linum-relative-format " "))
+    (menu-bar-mode -1)
+    ;; (setq linum-format (concat linum-format " "))
+    ;; (setq linum-relative-format (concat linum-relative-format " "))
     )
-  ;;解决org表格里面中英文对齐的问题
-  ;; (when (configuration-layer/layer-usedp 'chinese)
-  ;;   (when (and (spacemacs/system-is-mac) window-system)
-  ;;     (spacemacs//set-monospaced-font "Source Code Pro" "Hiragino Sans GB" 14 16)))
-
-  ;; Setting Chinese Font
-  ;; (when (and (spacemacs/system-is-mswindows) window-system)
-  ;;   (setq ispell-program-name "aspell")
-  ;;   (setq w32-pass-alt-to-system nil)
-  ;;   (setq w32-apps-modifier 'super)
-  ;;   (dolist (charset '(kana han symbol cjk-misc bopomofo))
-  ;;     (set-fontset-font (frame-parameter nil 'font)
-  ;;                       charset
-  ;;                       (font-spec :family "Microsoft Yahei" :size 14))))
 
   (fset 'evil-visual-update-x-selection 'ignore)
 
   ;; force horizontal split window
   (setq split-width-threshold 120)
-                                        ;(linum-relative-on)
+  ;(linum-relative-on)
 
   (spacemacs|add-company-backends :modes text-mode)
 
@@ -545,23 +563,16 @@ values."
       (fundamental-mode)))
   (spacemacs/set-leader-keys "otm" 'frtmelody/toggle-major-mode)
 
-  ;; (add-hook 'text-mode-hook 'spacemacs/toggle-spelling-checking-on)
+  (setq inhibit-compacting-font-caches t)
+  (global-display-line-numbers-mode -1)
 
-  ;; https://github.com/syl20bnr/spacemacs/issues/7749
-  (defun spacemacs/ivy-persp-switch-project (arg)
-    (interactive "P")
-    (ivy-read "Switch to Project Perspective: "
-              (if (projectile-project-p)
-                  (cons (abbreviate-file-name (projectile-project-root))
-                        (projectile-relevant-known-projects))
-                projectile-known-projects)
-              :action (lambda (project)
-                        (let ((persp-reset-windows-on-nil-window-conf t))
-                          (persp-switch project)
-                          (let ((projectile-completion-system 'ivy)
-                                (old-default-directory default-directory))
-                            (projectile-switch-project-by-name project)
-                            (setq default-directory old-default-directory))))))
+  ;; (add-hook 'text-mode-hook 'spacemacs/toggle-spelling-checking-on)
+  (defun moon-override-yank-pop (&optional arg)
+    "Delete the region before inserting poped string."
+    (when (and evil-mode (eq 'visual evil-state))
+      (kill-region (region-beginning) (region-end))))
+
+  (advice-add 'counsel-yank-pop :before #'moon-override-yank-pop)
   )
 
 (setq custom-file (expand-file-name "custom.el" dotspacemacs-directory))

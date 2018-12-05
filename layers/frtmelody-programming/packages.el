@@ -16,13 +16,12 @@
       '(
         css-mode
         paredit
-        lispy
-        cquery
         cmake-font-lock
         cmake-mode
         flycheck
         nodejs-repl
         (nodejs-repl-eval :location local)
+        (ox-confluence-en :location local)
         js2-mode
         js2-refactor
         json-mode
@@ -35,30 +34,17 @@
         go-mode
         lua-mode
         (cc-mode :location built-in)
-        ;; flycheck-clojure
         etags-select
-        (python :location built-in)
         (emacs-lisp :location built-in)
-        ;; clojure-mode
         company
         (eldoc :location built-in)
         dumb-jump
         graphviz-dot-mode
         cider
-        ;; toml-mode
-        ;; company-flx
-        ;; editorconfig
         robe
+        (python :location built-in)
         counsel-etags
-        company-lsp
-        lsp-ui
-        (lsp-imenu :location built-in)
-        lsp-javascript-typescript
-        (lsp-javascript-flow :location built-in)
-        (lsp-typescript :location built-in)
-        lispy
-
-        ))
+        lispy))
 
 ;; configuration scheme
 ;; https://prettier.io/docs/en/configuration.html#configuration-schema
@@ -150,8 +136,8 @@
 
 (defun frtmelody-programming/post-init-graphviz-dot-mode ()
   (with-eval-after-load 'graphviz-dot-mode
-      (require 'company-keywords)
-      (push '(graphviz-dot-mode  "digraph" "node" "shape" "subgraph" "label" "edge" "bgcolor" "style" "record") company-keywords-alist)))
+    (require 'company-keywords)
+    (push '(graphviz-dot-mode  "digraph" "node" "shape" "subgraph" "label" "edge" "bgcolor" "style" "record") company-keywords-alist)))
 
 (defun frtmelody-programming/post-init-dumb-jump ()
   (setq dumb-jump-selector 'ivy)
@@ -165,33 +151,11 @@
   )
 
 (defun frtmelody-programming/post-init-emacs-lisp ()
-    (remove-hook 'emacs-lisp-mode-hook 'auto-compile-mode))
-
-(defun frtmelody-programming/post-init-python ()
-  ;; (add-hook 'python-mode-hook #'(lambda ()
-  ;;                                 (modify-syntax-entry ?_ "w")
-  ;;                                 (set (make-local-variable 'company-backends) '(company-lsp))
-  ;;                                 (company-mode)
-  ;;                                 ))
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (set (make-local-variable 'company-backends) '(company-lsp))
-              (company-mode)
-              (lsp-python-enable)
-              (company-lsp)
-              (modify-syntax-entry ?_ "w")
-              ))
-  (setq python-shell-interpreter "python")
- )
+  (remove-hook 'emacs-lisp-mode-hook 'auto-compile-mode))
 
 (defun frtmelody-programming/post-init-go-mode ()
   (add-hook 'before-save-hook 'gofmt-before-save)
-   (add-hook 'go-mode-hook
-          (lambda ()
-            (set (make-local-variable 'company-backends) '(company-go))
-            (company-mode)
-            ))
-)
+  )
 
 (defun frtmelody-programming/post-init-js-doc ()
   (setq js-doc-mail-address "ruichao.liu@gmail.com"
@@ -233,8 +197,8 @@
                                                                       markdown-mode-hook))
 
     (spacemacs/add-to-hooks 'frtmelody/load-yasnippet '(prog-mode-hook
-                                                            markdown-mode-hook
-                                                            org-mode-hook))
+                                                        markdown-mode-hook
+                                                        org-mode-hook))
     ))
 
 (defun frtmelody-programming/post-init-racket-mode ()
@@ -263,7 +227,10 @@
     :defer t))
 
 (defun frtmelody-programming/init-flycheck-package ()
-  (use-package flycheck-package))
+  (use-package flycheck-package)
+  (add-hook 'java-mode-hook 'flycheck-mode)
+  (add-hook 'kotlin-mode-hook 'flycheck-mode)
+  )
 
 (defun frtmelody-programming/init-lispy ()
   (use-package lispy
@@ -308,7 +275,7 @@
 (defun frtmelody-programming/post-init-cmake-mode ()
   (progn
     (spacemacs/declare-prefix-for-mode 'cmake-mode
-                                       "mh" "docs")
+      "mh" "docs")
     (spacemacs/set-leader-keys-for-major-mode 'cmake-mode
       "hd" 'cmake-help)
     (add-hook 'cmake-mode-hook (function cmake-rename-buffer))))
@@ -348,8 +315,8 @@
                 js2-mode-show-parse-errors nil
                 js2-mode-show-strict-warnings nil
                 js2-highlight-external-variables t)
-    (evilified-state-evilify js2-error-buffer-mode js2-error-buffer-mode-map)
-    )
+  (evilified-state-evilify js2-error-buffer-mode js2-error-buffer-mode-map)
+  )
 
 (defun frtmelody-programming/post-init-css-mode ()
   (progn
@@ -386,7 +353,7 @@
     :init
     (progn
       (spacemacs/declare-prefix-for-mode 'js2-mode
-                                         "ms" "REPL")
+        "ms" "REPL")
       (spacemacs/set-leader-keys-for-major-mode 'js2-mode
         "sb" 'nodejs-repl-eval-buffer
         "sf" 'nodejs-repl-eval-function
@@ -433,8 +400,8 @@
     (setq c-default-style "linux") ;; set style to "linux"
     (setq c-basic-offset 4)
     (c-set-offset 'substatement-open 0)
+    )
   )
- )
 
 (defun frtmelody-programming/init-flycheck-clojure ()
   (use-package flycheck-clojure
@@ -489,32 +456,43 @@
 
 (defun frtmelody-programming/post-init-company ()
   (progn
-    (spacemacs|add-company-backends :backends company-lsp :modes js2-mode)
-    (spacemacs|add-company-backends :backends company-lsp :modes rjsx-mode)
-    (spacemacs|add-company-backends :backends company-lsp :modes c-mode-common)
     (setq company-minimum-prefix-length 1
           company-echo-delay 0
           company-tooltip-limit 20
           company-idle-delay 0.08
+          company-lsp-cache-candidates t
           company-begin-commands '(self-insert-command)
           )
 
     (when (configuration-layer/package-usedp 'company)
       (spacemacs|add-company-backends :modes shell-script-mode makefile-bsdmake-mode sh-mode lua-mode nxml-mode conf-unix-mode json-mode graphviz-dot-mode go-mode python-mode toml-mode))
     )
-  ;; define company-mode keybindings
-  (with-eval-after-load 'company
-    (progn
-      (bb/define-key company-active-map
-        (kbd "C-w") 'evil-delete-backward-word)
-
-      (bb/define-key company-active-map
-        (kbd "s-w") 'company-show-location)
-      (define-key company-active-map (kbd "M-n") nil)
-      (define-key company-active-map (kbd "M-p") nil)
-      (define-key company-active-map (kbd "C-n") #'company-select-next)
-      (define-key company-active-map (kbd "C-p") #'company-select-previous)))
+    ;; define company-mode keybindings
+    (with-eval-after-load 'company
+      (progn
+        (define-key company-active-map (kbd "C-w") 'evil-delete-backward-word)
+        (define-key company-active-map (kbd "s-w") 'company-show-location)
+        (define-key company-active-map (kbd "M-n") nil)
+        (define-key company-active-map (kbd "M-p") nil)
+        (define-key company-active-map (kbd "C-n") #'company-select-next)
+        (define-key company-active-map (kbd "C-p") #'company-select-previous)))
   )
+
+(defun frtmelody-programming/post-init-python ()
+  (add-hook 'python-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+  ;; if you use pyton3, then you could comment the following line
+  (setq python-shell-interpreter "python")
+  (add-hook 'python-mode-hook 'ycmd-mode)
+  (spacemacs|add-company-backends :backends company-ycmd :modes python-mode)
+
+  ;; (setq company-backends-web-mode '(( company-ycmd
+  ;;                                     company-dabbrev-code
+  ;;                                     company-keywords
+  ;;                                     company-files
+  ;;                                     company-dabbrev)))
+  (add-to-list 'spacemacs-jump-handlers-python-mode 'ycmd-goto-definition)
+  )
+
 
 (defun frtmelody-programming/init-counsel-etags ()
   (use-package counsel-etags
@@ -530,91 +508,27 @@
                 (add-hook 'after-save-hook
                           'counsel-etags-virtual-update-tags 'append 'local)))))
 
-(defun frtmelody-programming/post-init-lsp-ui ()
-  ;; temporary fix for flycheck
-  (setq lsp-ui-flycheck-enable nil)
 
-  ;; set spacemacs-jump-handlers-%S (gd)
-  (my-set-lsp-key-bindings 'python-mode)
-  (my-set-lsp-key-bindings 'js2-mode)
-  (my-set-lsp-key-bindings 'rjsx-mode)
-  (my-set-lsp-key-bindings 'typescript-mode)
-  (my-set-lsp-key-bindings 'c++-mode)
-  (my-set-lsp-key-bindings 'c-mode)
-
-  (define-key evil-normal-state-map (kbd "gr") #'lsp-ui-peek-find-references)
-
-  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  )
-
-(defun frtmelody-programming/post-init-company-lsp ()
-  ;; https://github.com/tigersoldier/company-lsp/issues/30
-  (setq company-lsp-cache-candidates 'auto))
-
-
-(defun frtmelody-programming/init-lsp-imenu ()
-  (use-package lsp-imenu
-    :init
-    (spacemacs/set-leader-keys "bl" 'lsp-ui-imenu)
-    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-    :defer t)
-  )
-
-(defun frtmelody-programming/init-lsp-javascript-typescript ()
-  (use-package lsp-javascript-typescript
-    :commands lsp-javascript-typescript-enable
-    :init
-    (add-hook 'js-mode-hook #'lsp-javascript-typescript-enable)
-    (add-hook 'typescript-mode-hook #'lsp-javascript-typescript-enable) ;; for typescript support
-    (add-hook 'js3-mode-hook #'lsp-javascript-typescript-enable) ;; for js3-mode support
-    (add-hook 'rjsx-mode #'lsp-javascript-typescript-enable) ;; for rjsx-mode support
-    :defer t))
-
-(defun frtmelody-programming/init-lsp-javascript-flow ()
-  (use-package lsp-javascript-flow
-    :commands lsp-javascript-flow-enable
-    :init
-    (add-hook 'js-mode-hook #'lsp-javascript-flow-enable)
-    (add-hook 'js2-mode-hook #'lsp-javascript-flow-enable) ;; for js2-mode support
-    (add-hook 'rjsx-mode #'lsp-javascript-flow-enable) ;; for rjsx-mode support
-    :defer t))
-
-(defun frtmelody-programming/init-lsp-typescript ()
-  (use-package lsp-typescript
-    :commands lsp-typescript-enable
-    :init
-    (add-hook 'js-mode-hook #'lsp-typescript-enable)
-    (add-hook 'js2-mode-hook #'lsp-typescript-enable) ;; for js2-mode support
-    (add-hook 'rjsx-mode #'lsp-typescript-enable) ;; for rjsx-mode support
-    :defer t))
-
-(defun frtmelody-programming/init-cquery ()
-(use-package cquery
-  :defer t
-  :commands lsp-cquery-enable
-  :init (add-hook 'c-mode-common-hook #'lsp-cquery-enable)
-  ))
 
 (defun frtmelody-programming/init-import-js ()
-(use-package import-js
-  :init
-  (progn
-    (run-import-js)
-    (spacemacs/set-leader-keys-for-major-mode 'js2-mode "i" 'import-js-import)
-    (spacemacs/set-leader-keys-for-major-mode 'rjsx-mode "i" 'import-js-import))
-  :defer t))
+  (use-package import-js
+    :init
+    (progn
+      (run-import-js)
+      (spacemacs/set-leader-keys-for-major-mode 'js2-mode "i" 'import-js-import)
+      (spacemacs/set-leader-keys-for-major-mode 'rjsx-mode "i" 'import-js-import))
+    :defer t))
 
 (defun frtmelody-programming/init-lispy ()
   (use-package lispy
     :defer t
     :init
     (spacemacs/add-to-hooks (lambda () (lispy-mode)) '(emacs-lisp-mode-hook
-                                                       ielm-mode-hook
-                                                       inferior-emacs-lisp-mode-hook
-                                                       clojure-mode-hook
-                                                       scheme-mode-hook
-                                                       cider-repl-mode-hook))
+                                                  ielm-mode-hook
+                                                  inferior-emacs-lisp-mode-hook
+                                                  clojure-mode-hook
+                                                  scheme-mode-hook
+                                                  cider-repl-mode-hook))
     :config
     (progn
       (define-key lispy-mode-map (kbd "C-a") 'mwim-beginning-of-code-or-line)
@@ -631,3 +545,11 @@
       (add-hook
        'minibuffer-setup-hook
        'conditionally-enable-lispy))))
+
+(defun frtmelody-programming/init-ox-confluence-en ()
+  (use-package ox-confluence-en)
+  )
+
+(defun frtmelody-programming/post-init-lsp-intellij ()
+  (spacemacs|define-jump-handlers java-mode)
+  (spacemacs//setup-lsp-jump-handler 'java-mode))
