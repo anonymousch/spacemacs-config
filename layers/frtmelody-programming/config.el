@@ -44,8 +44,6 @@
 (add-to-list 'auto-mode-alist '("\\.mm\\'" . objc-mode))
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c++-mode))
 
-
-
 ;; return nil to write content to file
 (defun frtmelody/untabify-buffer ()
   (interactive)
@@ -61,7 +59,6 @@
       (append
        '(("\\.mak\\'" . makefile-bsdmake-mode))
        auto-mode-alist))
-
 
 (defmacro frtmelody|toggle-company-backends (backend)
   "Push or delete the backend to company-backends"
