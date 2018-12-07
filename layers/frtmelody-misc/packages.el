@@ -914,7 +914,7 @@ Search for a search tool in the order provided by `dotspacemacs-search-tools'."
           ;; well, I'm not interested in concatenated BIG js file or file in dist/
           (setq-local ffip-find-options "-not -size +64k -not -iwholename '*/bin/*'")
           ;; do NOT search files in below directories, the default value is better.
-          (dolist (item '("*/docs/html/*" "*.meta" "*/cocos2d-x/*" "*.asset" "*/visual-tests/res/*"))
+          (dolist (item '("*/docs/html/*" "*.meta" "*.asset" "*/visual-tests/res/*"))
             (push item  ffip-prune-patterns)))
         (when (ffip-current-full-filename-match-pattern-p "\\(/rpc-go\\)")
           ;; set the root directory into "~/projs/PROJECT_DIR"
@@ -959,51 +959,6 @@ Search for a search tool in the order provided by `dotspacemacs-search-tools'."
       :env '(("LANG" "en_US.UTF-8")
              ("LC_ALL" "en_US.UTF-8")))
     ;; define service
-    (prodigy-define-service
-      :name "Preview cocos2d-x web"
-      :command "python"
-      :args '("-m" "SimpleHTTPServer" "6001")
-      :cwd "~/cocos2d-x/web"
-      :tags '(work)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
-
-    (prodigy-define-service
-      :name "Preview creator engine"
-      :command "python"
-      :args '("-m" "SimpleHTTPServer" "6004")
-      :cwd "~/Github/fireball/engine"
-      :tags '(work)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
-
-    (prodigy-define-service
-      :name "Hexo Server"
-      :command "hexo"
-      :args '("server")
-      :cwd "~/4gamers.cn"
-      :tags '(hexo server)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
-
-    (prodigy-define-service
-      :name "Hexo Deploy"
-      :command "hexo"
-      :args '("deploy" "--generate")
-      :cwd "~/4gamers.cn"
-      :tags '(hexo deploy)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
-
-    (prodigy-define-service
-      :name "Debug Fireball"
-      :command "npm"
-      :args '("start" "--" "--nologin" "/Users/melody/Github/example-cases")
-      :cwd "~/Github/fireball/"
-      :tags '(work)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
-
     (prodigy-define-service
       :name "Org wiki preview"
       :command "python"
@@ -1133,7 +1088,7 @@ Search for a search tool in the order provided by `dotspacemacs-search-tools'."
     ;; prefer two way ediff
     (setq magit-ediff-dwim-show-on-hunks t)
 
-    (setq magit-repository-directories '("~/cocos2d-x/"))
+    (setq magit-repository-directories '("~/.spacemacs.d/"))
     (setq magit-push-always-verify nil)
 
     (eval-after-load 'magit

@@ -35,8 +35,8 @@ values."
    '(
      (ivy :variables ivy-enable-advanced-buffer-information t)
      (better-defaults :variables
-      better-defaults-move-to-beginning-of-code-first t
-      better-defaults-move-to-end-of-code-first nil)
+                      better-defaults-move-to-beginning-of-code-first t
+                      better-defaults-move-to-end-of-code-first nil)
      ranger
      colors
      themes-megapack
@@ -84,10 +84,10 @@ values."
      (chrome :packages (not edit-server gmail-message-mode))
      (org :variables org-want-todo-bindings t)
      yaml
-     ;; (lsp :variables
-     ;;      lsp-ui-sideline-enable nil
-     ;;      lsp-ui-doc-include-signature t
-     ;;      lsp-ui-remap-xref-keybindings t)
+     (lsp :variables
+          lsp-ui-sideline-enable nil
+          lsp-ui-doc-include-signature t
+          lsp-ui-remap-xref-keybindings t)
      (python :variables
              python-sort-imports-on-save t
              python-enable-yapf-format-on-save t
@@ -125,14 +125,14 @@ values."
      (clojure :variables clojure-enable-fancify-symbols t)
      racket
      (c-c++
-            :variables
-            c-c++-enable-rtags-support 'no-completion
-            c-c++-default-mode-for-headers 'c++-mode
-            c-c++-enable-clang-support t
-            c-c++-enable-clang-format-on-save t
-            c-c++-enable-google-style t
-            c-c++-enable-google-newline t
-            c-c++-enable-c++11 t)
+      :variables
+      c-c++-enable-rtags-support 'no-completion
+      c-c++-default-mode-for-headers 'c++-mode
+      c-c++-enable-clang-support t
+      c-c++-enable-clang-format-on-save t
+      c-c++-enable-google-style t
+      c-c++-enable-google-newline t
+      c-c++-enable-c++11 t)
      frtmelody
      (scala :variables
             scala-enable-eldoc t
@@ -146,7 +146,7 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   ;dotspacemacs-additional-packages '(sicp)
+   ;; dotspacemacs-additional-packages '(sicp)
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    dotspacemacs-excluded-packages
@@ -477,9 +477,6 @@ values."
 (defun dotspacemacs/user-config ()
   (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
   (setq spacemacs-default-jump-handlers nil)
-        ;; (remove 'evil-goto-definition spacemacs-default-jump-handlers)
-        ;; (remove 'dump-jump-go spacemacs-default-jump-handlers)
-        ;; )
 
   (defun frtmelody-kill-buffer-or-close-window ()
     (interactive)
@@ -503,15 +500,29 @@ values."
   ;; disable menubar https://emacs.stackexchange.com/questions/29441/how-do-i-disable-menu-bar-mode-only-for-tty-frames
   (unless (display-graphic-p)
     (menu-bar-mode -1)
-    ;; (setq linum-format (concat linum-format " "))
-    ;; (setq linum-relative-format (concat linum-relative-format " "))
+    (xterm-mouse-mode -1)
+    (if (string-equal system-type "darwin")
+        (progn
+          (defun paste-to-osx (text &optional push)
+            (let ((process-connection-type nil))
+              (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+                (message "paste-to-osx")
+                ;; (message text)
+                (process-send-string proc text)
+                (process-send-eof proc))))
+          (defun copy-from-osx ()
+            (shell-command-to-string "pbpaste"))
+          (setq interprogram-cut-function 'paste-to-osx)
+          (setq interprogram-paste-function 'copy-from-osx)
+          )
+      )
     )
 
   (fset 'evil-visual-update-x-selection 'ignore)
 
   ;; force horizontal split window
   (setq split-width-threshold 120)
-  ;(linum-relative-on)
+  ;; (linum-relative-on)
 
   (spacemacs|add-company-backends :modes text-mode)
 
@@ -582,4 +593,4 @@ values."
 This is an auto-generated function, do not modify its content directly, use
 Emacs customize menu instead.
 This function is called at the very end of Spacemacs initialization."
-)
+  )

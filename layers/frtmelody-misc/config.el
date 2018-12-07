@@ -32,10 +32,9 @@
                                             ("8win" "Windows")
                                             ("8ie" "Internet Explorer")
                                             ("8ahk" "AutoHotkey")
-                                            ("82dx" "Cocos2D-X")
 
                                             ;; signature
-                                            ("8zl" "frtmelody")
+                                            ("8ft" "frtmelody")
                                             ;; emacs regex
                                             ("8d" "\\([0-9]+?\\)")
                                             ("8str" "\\([^\"]+?\\)\"")))

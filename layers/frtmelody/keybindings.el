@@ -29,11 +29,12 @@
 (global-set-key (kbd "C-c i e") 'spacemacs/auto-yasnippet-expand)
 ;; http://emacs.stackexchange.com/questions/220/how-to-bind-c-i-as-different-from-tab
 ;; (define-key input-decode-map [?\C-i] [C-i])
-;; (define-key evil-normal-state-map (kbd "C-i") 'evil-jump-forward)
+;; fix terminal mode C-i, use iterm2 key map to Esc-ejf
+(define-key evil-normal-state-map (kbd "M-e j f") 'evil-jump-forward)
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
-;; (global-set-key (kbd "C-.") 'company-capf)
+(global-set-key (kbd "C-.") 'company-capf)
 
 ;; some easy functions for navigate functions
 ;;C-M-a beginning-of-defun
