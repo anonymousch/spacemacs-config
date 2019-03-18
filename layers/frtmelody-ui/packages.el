@@ -167,7 +167,8 @@
                  ") "
 
                  '(:eval (when (> (window-width) 80)
-                           (buffer-encoding-abbrev)))
+                           (buffer-encoding-abbrev)
+                           ))
                  mode-line-end-spaces
                  ;; add the time, with the date and the emacs uptime in the tooltip
                  ;; '(:eval (propertize (format-time-string "%H:%M")
